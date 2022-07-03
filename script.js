@@ -14,7 +14,6 @@ let monthDay = new Date().getMonth();
 let day = new Date().getDate()
 let months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек']
 dayAndMonth.textContent = `${day} ${months[monthDay]}`
-console.log(dayAndMonth)
 
 setInterval(() => {
     let t = new Date().toLocaleTimeString()
@@ -23,7 +22,7 @@ setInterval(() => {
 
 let tasks = [{
         label: "Сходить в собеседование",
-        completed: true,
+        completed: false,
         id: 0
     },
     {
@@ -52,8 +51,11 @@ const render = (tasks) => {
     let renderTasks = (tasks) => {
         taskList.textContent = ""
         tasks.map((task) => {
-            taskList.insertAdjacentHTML("beforeend", `<li class="task">
-                    <svg
+            let done = task.completed ? 'done' : ''
+            taskList.insertAdjacentHTML("beforeend", `<li data-id="${task.id}" class="task">
+            <button class="complete">
+            <svg
+
                         class="icon-done"
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
@@ -69,8 +71,10 @@ const render = (tasks) => {
                             d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"
                         />
                     </svg>
-                    <h2 class="label">${task.label}</h2>
-                    <button class="trasn-btn">
+            
+            </button>        
+                    <h2 class="label ${done}">${task.label}</h2>
+                    <button class="trash-btn">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="16"
@@ -90,13 +94,39 @@ const render = (tasks) => {
                     </button>
                 </li>`)
         })
+        let delBtns = document.querySelectorAll(".trash-btn")
+        delBtns.forEach((b) => {
+            b.addEventListener('click', (e) => {
+                let idX = e.target.parentNode.parentNode.dataset.id
+                if (idX == undefined) return;
+                tasks = tasks.filter((task) => {
+                    return task.id != idX
+                })
+                render(tasks)
+            })
 
+
+        })
+        createdNum.textContent = tasks.length
+        let completedArr = tasks.filter((t) => {
+            return t.completed
+        })
+        completedNum.textContent = completedArr.length
+        let completedBtns = document.querySelectorAll('.complete')
+        completedBtns.forEach((b) => {
+            b.addEventListener('click', (e) => {
+                let idX = e.target.parentNode.parentNode.dataset.id
+                let elem = document.querySelector(`li[data-id='${idX}']`)
+                // console.log(idX, elem)
+                if (idX == undefined || elem == null) return;
+                elem.childNodes[3].classList.toggle('done')
+                completedNum.textContent = document.querySelectorAll('.done').length
+
+            })
+        })
     }
+
     renderTasks(tasks)
-    createdNum.textContent = tasks.length
-    let completedArr = tasks.filter((t) => {
-        return t.completed
-    })
-    completedNum.textContent = completedArr.length
+
 }
 render(tasks)
