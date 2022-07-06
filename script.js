@@ -125,8 +125,31 @@ const render = (tasks) => {
             })
         })
     }
+    const form = document.querySelector("form");
+    const input = document.querySelector("input");
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault() // сброс перезагрузки страницы
+        if (!input.value) return
+        tasks.push({
+            label: input.value,
+            completed: false,
+            id: tasks.length,
+
+        });
+        renderTasks(tasks)
+        input.value = ""
+    })
+
 
     renderTasks(tasks)
 
 }
 render(tasks)
+
+// const getPhoto = async () => {
+//     const resp = await fetch('https://jsonplaceholder.typicode.com/photos')
+//     const photo = await resp.json()
+//     console.log(photo)
+// }
+// getPhoto()
